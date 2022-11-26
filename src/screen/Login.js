@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from "@material-ui/core/TextField";
 import {
@@ -9,6 +9,8 @@ import {
 }
 from "@material-ui/core";
 import { Link } from 'react-router-dom';
+import { logIn } from '../api'
+import AuthContextProvider, { AuthContext } from '../context/AuthContext.js';
 
 const useStyles = makeStyles((theme) => ({
     main : {
@@ -34,6 +36,29 @@ const useStyles = makeStyles((theme) => ({
 export default function Login() {
 
     const classes = useStyles();
+
+    const { userData, updateUserData } = useContext(AuthContext);
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+    const onChangeUsername = (e) => {
+        setUsername(e.target.value);
+    }
+
+    const onChangePassword = (e) => {
+        setPassword(e.target.value);
+    }
+
+    const onLogIn = () => {
+        if(username && password) {
+            logIn(username, password).then((uData) => {
+                updateUserData(uData);
+                console.log(userData);
+            })
+            //window.location.href="/";
+        }
+    }
+
     return (
         <div>
             <div className={classes.main}>
@@ -52,20 +77,21 @@ export default function Login() {
                             className={classes.textField}
                             type="text"
                             label="Username"
+                            onChange={onChangeUsername}
                             required
                         />
                         <TextField
                             className={classes.textField}
                             type="password"
                             label="Password"
+                            onChange={onChangePassword}
                             required
                         />
                         <h5> </h5>
                         <Button
                             className={classes.loginButton}
                             variant="contained"
-                            component={Link}
-                            to="/"
+                            onClick={onLogIn}
                         >
                             Log in
                         </Button>

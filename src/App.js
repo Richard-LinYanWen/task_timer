@@ -38,24 +38,21 @@ function App() {
   const classes = useStyles();
 
   return (
-    <body>
-      <div className="App">
-        <Card className={classes.bar}>
-          <Button
-            variant="contained"
-            component={Link}
-            to="/login"
-          >
-            Log in
-          </Button>
-        </Card>
-        <h3> </h3>
-        <main>
-	 			  <Router />
-	 		  </main>
-      </div>
-    </body>
-    
+    <div className="App">
+      <Card className={classes.bar}>
+        <Button
+          variant="contained"
+          component={Link}
+          to="/login"
+        >
+          Log in
+        </Button>
+      </Card>
+      <h3> </h3>
+      <main>
+	 		  <Router />
+		  </main>
+    </div>
   );
 }
 

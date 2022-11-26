@@ -4,8 +4,6 @@ import hmacSHA256 from 'crypto-js/hmac-sha256';
 import Base64 from 'crypto-js/enc-base64';
 
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -22,13 +20,14 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+firebase.initializeApp(firebaseConfig);
+firebase.analytics();
 
 const PrivateKey = '6T4T9'
 
 const db = firebase.firestore();
 const Users = db.collection('users');
+const TaskList = db.collection('tasklist');
 
 export function encrypt(message)
 {
@@ -56,6 +55,9 @@ export function signUp(email, username, name, password, passwordconf) {
             .then(() => resolve(true))
             .catch((err) => reject(err))
         }
+        else {
+            alert("Password confirmation does not match, please check again.")
+        }
 
     })
 }
@@ -64,13 +66,72 @@ export function logIn(username, password) {
     return new Promise((resolve, reject) => {
 
         if(username && password) {
-
             Users.where('username', '==', username)
             .where('password', '==', encrypt(password))
             .get()
-            .then(() => resolve(true))
-            .catch((err) => reject(err))
+            .then((res) => {
+                let uData = {
+                    id : res.docs[0].id,
+                    username : res.docs[0].data().username
+                }
+                resolve(uData);
+                console.log(uData);
+            })
+            .catch((err) => reject(err));
+            console.log("Logged in!");
         }
 
     })
+}
+
+export function setLocalStorage(key, value) {
+    try {
+        window.localStorage.setItem(key, JSON.justify(value));
+    }
+    catch (e) {
+        console.log(e);
+    }
+}
+
+export function getLocalStorage(key, initialValue) {
+    try {
+        const value = window.localStorage.getItem(key);
+        return value ? JSON.parse(value) : initialValue;
+    }
+    catch (e) {
+        return initialValue;
+    }
+}
+
+export function addTask(taskname, completion=false, user) {
+    return new Promise((resolve, reject) => {
+        console.log('adding...')
+        if(taskname && user) {
+            TaskList.add(taskname, completion, user);
+            console.log('added!');
+        }
+    })
+}
+
+export function getTaskList() {
+	return new Promise((resolve, reject) => {
+
+		TaskList.get().then((res) => {
+			let tasklist = [];
+			if (res.docs.length > 0)
+			{				
+				for (let i=0; i < res.docs.length; ++i)
+				{
+					tasklist.push({
+						id: res.docs[i].id,
+						taskname: res.docs[i].data().taskname,
+						completion: res.docs[i].data().completion,
+						user: res.docs[i].data().user
+					})
+				}
+			}
+			resolve(tasklist);
+		})
+		.catch((err) => reject(err));
+	})
 }
