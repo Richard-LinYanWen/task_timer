@@ -70,15 +70,21 @@ export function logIn(username, password) {
             .where('password', '==', encrypt(password))
             .get()
             .then((res) => {
-                let uData = {
-                    id : res.docs[0].id,
-                    username : res.docs[0].data().username
+                console.log(res.docs[0]);
+                if (res.docs.length == 0) {
+                    resolve(null);
                 }
-                resolve(uData);
-                console.log(uData);
+                else {
+                    let uData = {
+                        id : res.docs[0].id,
+                        username : res.docs[0].data().username
+                    }
+                    resolve(uData);
+                    console.log(uData);
+                }
             })
             .catch((err) => reject(err));
-            console.log("Logged in!");
+            //console.log("Logged in!");
         }
 
     })
@@ -86,7 +92,7 @@ export function logIn(username, password) {
 
 export function setLocalStorage(key, value) {
     try {
-        window.localStorage.setItem(key, JSON.justify(value));
+        window.localStorage.setItem(key, JSON.stringify(value));
     }
     catch (e) {
         console.log(e);
@@ -103,11 +109,12 @@ export function getLocalStorage(key, initialValue) {
     }
 }
 
-export function addTask(taskname, completion=false, user) {
+export function addTask(taskname, completion, user) {
     return new Promise((resolve, reject) => {
-        console.log('adding...')
         if(taskname && user) {
-            TaskList.add(taskname, completion, user);
+            TaskList.add({taskname, completion, user})
+            .then(() => resolve(true))
+            .catch((err) => reject(err));
             console.log('added!');
         }
     })

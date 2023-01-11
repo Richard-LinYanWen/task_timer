@@ -37,7 +37,7 @@ export default function Login() {
 
     const classes = useStyles();
 
-    const { userData, updateUserData } = useContext(AuthContext);
+    const { userData, setUData } = useContext(AuthContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
@@ -52,10 +52,14 @@ export default function Login() {
     const onLogIn = () => {
         if(username && password) {
             logIn(username, password).then((uData) => {
-                updateUserData(uData);
-                console.log(userData);
+                if (uData == null) {
+                    alert("Invalid username or password");
+                }
+                else {
+                    setUData(uData);
+                    window.location.href="/";
+                }
             })
-            //window.location.href="/";
         }
     }
 

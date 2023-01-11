@@ -7,16 +7,18 @@ export default function AuthContextProvider(props) {
 
     const userKey = "user";
 
-    const setUserData = (userData) => {
-        setLocalStorage(userKey, userData);
-        this.State({userData});
+    const [userData, setUserData] = useState(getLocalStorage(userKey));
+    const setUData = (data) => {
+        setUserData(data);
+        setLocalStorage(userKey, data);
+        console.log(data);
     }
 
     return (
         <AuthContext.Provider value={
             {
                 userData,
-                setUserData
+                setUData
             }
         }>
             {props.children}
