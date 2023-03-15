@@ -70,8 +70,8 @@ export function logIn(username, password) {
             .where('password', '==', encrypt(password))
             .get()
             .then((res) => {
-                console.log(res.docs[0]);
-                if (res.docs.length == 0) {
+                //console.log(res.docs[0]);
+                if (res.docs.length === 0) {
                     resolve(null);
                 }
                 else {
@@ -80,11 +80,11 @@ export function logIn(username, password) {
                         username : res.docs[0].data().username
                     }
                     resolve(uData);
-                    console.log(uData);
+                    //console.log(uData);
                 }
             })
             .catch((err) => reject(err));
-            //console.log("Logged in!");
+            console.log("Logged in!");
         }
 
     })
@@ -141,4 +141,29 @@ export function getTaskList() {
 		})
 		.catch((err) => reject(err));
 	})
+}
+
+export function delTask(id) {
+    return new Promise((resolve, reject) => {
+        if (id) {
+            TaskList.doc(id).delete()
+            .then(() => resolve(true))
+            .catch((err) => reject(err));
+        }
+    })
+}
+
+export function editTask(id, taskname, completion) {
+    return new Promise ((resolve, reject) => {
+        let editedTask = {};
+        if (taskname) {
+            editedTask.taskname = taskname
+        };
+        if (completion !== undefined) (
+            editedTask.completion = completion
+        );
+        TaskList.doc(id).update(editedTask)
+        .then(() => resolve(true))
+        .catch((err) => reject(err))
+    })
 }

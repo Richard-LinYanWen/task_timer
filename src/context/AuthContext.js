@@ -11,7 +11,6 @@ export default function AuthContextProvider(props) {
     const setUData = (data) => {
         setUserData(data);
         setLocalStorage(userKey, data);
-        console.log(data);
     }
 
     return (
