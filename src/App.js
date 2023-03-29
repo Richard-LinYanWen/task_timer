@@ -9,6 +9,9 @@ import {
 }
 from "@material-ui/core";
 import { Link } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from './context/AuthContext';
+import { clearLocalStorage } from './api';
 
 const useStyles = makeStyles(() => ({
   main : {
@@ -36,17 +39,28 @@ const useStyles = makeStyles(() => ({
 function App() {
 
   const classes = useStyles();
+  const { userData, setUData } = useContext(AuthContext);
 
   return (
     <div className="App">
       <Card className={classes.bar}>
-        <Button
-          variant="contained"
-          component={Link}
-          to="/login"
-        >
-          Log in
-        </Button>
+        {
+          userData == undefined ?
+          <Button
+            variant="contained"
+            component={Link}
+            to="/login"
+          >
+            Log in
+          </Button> :
+          <Button
+            variant="contained"
+            onClick={clearLocalStorage}
+          >
+            Log Out
+          </Button>
+        }
+        
       </Card>
       <h3> </h3>
       <main>

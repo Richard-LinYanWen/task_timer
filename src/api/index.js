@@ -109,6 +109,16 @@ export function getLocalStorage(key, initialValue) {
     }
 }
 
+export function clearLocalStorage() {
+    try {
+        window.localStorage.clear();
+        window.location.href='/login';
+    }
+    catch (e) {
+        console.log(e);
+    }
+}
+
 export function addTask(taskname, completion, user) {
     return new Promise((resolve, reject) => {
         if(taskname && user) {
@@ -120,26 +130,27 @@ export function addTask(taskname, completion, user) {
     })
 }
 
-export function getTaskList() {
+export function GetTaskList(userID) {
 	return new Promise((resolve, reject) => {
 
-		TaskList.get().then((res) => {
-			let tasklist = [];
-			if (res.docs.length > 0)
-			{				
-				for (let i=0; i < res.docs.length; ++i)
-				{
-					tasklist.push({
-						id: res.docs[i].id,
-						taskname: res.docs[i].data().taskname,
-						completion: res.docs[i].data().completion,
-						user: res.docs[i].data().user
-					})
-				}
-			}
-			resolve(tasklist);
-		})
-		.catch((err) => reject(err));
+        TaskList.where('user', '==', userID)
+        .get().then((res) => {
+            let tasklist = [];
+                if (res.docs.length > 0)
+                {
+                    for (let i=0; i < res.docs.length; ++i)
+                    {
+                        tasklist.push({
+                            id: res.docs[i].id,
+                            taskname: res.docs[i].data().taskname,
+                            completion: res.docs[i].data().completion,
+                            user: res.docs[i].data().user
+                        })
+                    }
+                }
+                resolve(tasklist);
+        })
+        .catch((err) => reject(err));
 	})
 }
 

@@ -5,7 +5,7 @@ import {
     TextField
 }
 from "@material-ui/core";
-import { addTask, getTaskList, delTask, editTask } from '../api';
+import { addTask, GetTaskList, delTask, editTask } from '../api';
 import { AuthContext } from '../context/AuthContext';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -112,10 +112,16 @@ export default function TaskList() {
     }
 
     const Load = () => {
-        getTaskList().then((res) => {
-            setTasklist(res);
-        })
-        .catch((err) => console.log(err))
+        if (userData) {
+            GetTaskList(userData.id).then((res) => {
+                setTasklist(res);
+            })
+            .catch((err) => console.log(err))
+        }
+        else {
+            window.location.href='/login';
+        }
+        
     }
 
     useEffect(() => {
